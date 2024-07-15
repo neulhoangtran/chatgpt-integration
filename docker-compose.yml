@@ -1,0 +1,12 @@
+version: '3.8'
+
+services:
+  chatgpt-app:
+    build: .
+    ports:
+      - "8200:8200"
+    env_file:
+      - .env.docker
+    volumes:
+      - .:/usr/src/app
+    command: ["npm", "start"]

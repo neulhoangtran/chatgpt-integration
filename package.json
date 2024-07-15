@@ -1,0 +1,21 @@
+{
+    "name": "chatgpt-app",
+    "version": "1.0.0",
+    "description": "",
+    "main": "app.js",
+    "scripts": {
+        "start": "nodemon app.js"
+    },
+    "dependencies": {
+        "@google-cloud/text-to-speech": "^5.3.0",
+        "axios": "^0.21.1",
+        "dotenv": "^8.2.0",
+        "express": "^4.17.1",
+        "openai": "^4.52.7"
+    },
+    "devDependencies": {
+        "nodemon": "^2.0.7"
+    },
+    "author": "",
+    "license": "ISC"
+}
