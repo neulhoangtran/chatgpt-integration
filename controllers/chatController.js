@@ -2,11 +2,14 @@ import { TextToSpeechClient } from '@google-cloud/text-to-speech';
 import { franc } from 'franc';
 import { getChatResponse } from '../services/chat.js';
 import audioConfig from '../config/config-audio.js';
-// const audioConfig = require('../config/config-audio.json');
+
 // Tạo client
-const client = new TextToSpeechClient({
-    keyFilename: './config/service-account-key.json' // Đường dẫn tới file khóa dịch vụ
-});
+// const client = new TextToSpeechClient({
+//     keyFilename: './config/service-account-key.json' // Đường dẫn tới file khóa dịch vụ
+// });
+
+const key = JSON.parse(process.env.GOOGLE_CLOUD_KEY);
+const client = new TextToSpeechClient({ credentials: key });
 
 const handleChatRequest = async (req, res) => {
     try {
