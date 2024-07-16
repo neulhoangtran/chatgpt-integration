@@ -5,7 +5,7 @@ import audioConfig from '../config/config-audio.js';
 // const audioConfig = require('../config/config-audio.json');
 // Tạo client
 const client = new TextToSpeechClient({
-    keyFilename: 'config/service-account-key.json' // Đường dẫn tới file khóa dịch vụ
+    keyFilename: './config/service-account-key.json' // Đường dẫn tới file khóa dịch vụ
 });
 
 const handleChatRequest = async (req, res) => {
