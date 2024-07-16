@@ -9,4 +9,5 @@ services:
       - .env.docker
     volumes:
       - .:/usr/src/app
-    command: ["npm", "start"]
+      - /usr/src/app/node_modules
+    command: ["nodemon", "app.js"]

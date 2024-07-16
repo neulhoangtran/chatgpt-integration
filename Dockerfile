@@ -8,6 +8,7 @@ WORKDIR /usr/src/app
 COPY package*.json ./
 
 # Cài đặt các phụ thuộc của ứng dụng
+RUN npm install -g nodemon
 RUN npm install
 
 # Sao chép toàn bộ mã nguồn của ứng dụng vào thư mục làm việc
@@ -17,4 +18,4 @@ COPY . .
 EXPOSE 8200
 
 # Chạy ứng dụng
-CMD ["npm", "start"]
+CMD ["nodemon", "app.js"]

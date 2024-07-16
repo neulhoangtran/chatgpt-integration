@@ -12,14 +12,14 @@ const chatController = {
         try {
             const { prompt } = req.body;
             const response = await chat.getChatResponse(prompt);
-
+            const audioContent = [];
             // Chuyển đổi phản hồi từ ChatGPT thành giọng nói
-            const audioContent = await textToSpeechConversion(response);
+            // const audioContent = await textToSpeechConversion(response);
 
             // Trả về phản hồi và dữ liệu âm thanh dưới dạng base64
-            res.json({ response, audioContent });
+            res.json({ response, audioContent, test: 123 });
         } catch (error) {
-            res.status(500).json({ error: 'Something went wrong', detail: error.toString() });
+            res.status(500).json({ error: 'Something went wrong 2', detail: error });
         }
     }
 };
