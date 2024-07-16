@@ -9,17 +9,19 @@ import audioConfig from '../config/config-audio.js';
 // });
 
 const key = {
-    type: process.env.GOOGLE_CLOUD_TYPE,
-    project_id: process.env.GOOGLE_CLOUD_PROJECT_ID,
-    private_key_id: process.env.GOOGLE_CLOUD_PRIVATE_KEY_ID,
-    private_key: process.env.GOOGLE_CLOUD_PRIVATE_KEY.replace(/\\n/g, '\n'),
-    client_email: process.env.GOOGLE_CLOUD_CLIENT_EMAIL,
-    client_id: process.env.GOOGLE_CLOUD_CLIENT_ID,
-    auth_uri: process.env.GOOGLE_CLOUD_AUTH_URI,
-    token_uri: process.env.GOOGLE_CLOUD_TOKEN_URI,
-    auth_provider_x509_cert_url: process.env.GOOGLE_CLOUD_AUTH_PROVIDER_CERT_URL,
-    client_x509_cert_url: process.env.GOOGLE_CLOUD_CLIENT_CERT_URL
-};
+    "type": "service_account",
+    "project_id": "chat-app-429602",
+    "private_key_id": "ea12ab2fa2868e004cdca315995e68edfec34104",
+    "private_key": "-----BEGIN PRIVATE KEY-----\nMIIEvwIBADANBgkqhkiG9w0BAQEFAASCBKkwggSlAgEAAoIBAQCw9CUYBw+8PSw3\naYT2AgfOzyWk36jbord94UQ/J+TGNYpwGBCfPiSIcZhjs/aCy0RmWpAiM/4lQeQ7\nHyJeTNHqukO/D+q+UAQoeoGtNs2yfPEOLXGuEfPyCkcawph4rcwD4XLNi69rBeZe\nE2mg2It0BKhSzEZqoN+u5CstPAu0hiM5Z8saT+8Mzn8KefRf+zzORDG775RlNWIC\noTLXp4/qMeMIL0uKfov93zoMmTeImyedCpa1AgI1cAbDcpFsYpJTHYW1Tw243Mow\nxHhXmLy4fCkC9DlgjL+V9Z9KZDnH/GxaOgwdbdc5WgGwQAQK4VA3CsHDWp3o+/7n\nScOUMi71AgMBAAECggEAJBXpwZxhCllsPLGdToDMAFHwgo6k1AN7CWXoobt8NSqC\nfIj/zMWitBt8QOrYfMRAguH5jiwNqiHljePzwYjHbyeEfMBddemB65JOAxmPuZQu\noV5FlkKtfYC4jt27s7J3jhwJ6h5QC9J0b99kFUvLpoFzpQzo2EJN00/O+UbLOUkh\npIXwpLCR71UYada08oXYFP+WJQbB4dEnQrgDGpV15/+n235TyNrAo2XNXQXPL1vH\n45W+BLtw3Iow5K5GMqQTmAZ/0nagrVeKDCgKObwVrVf57I1ne0g/WG6ao5fSdtP2\nH3hUwUaBz8qWoUZHM0WLiG+jAc17bm4zCnCMlnLtmQKBgQDcxHWLzEorQIB3WPm3\nfa9UbVgBU0seVkapLVCrkTfc36ucYoh+ujM4ew2SFYnUrZG8zTOL60kTCX3AA4fu\n6/0sawnCaUhD0FO+bWhoQy5GrFtFfsLNnEkrRbiRoE3rhuz4qlmDKwAX47chixpK\nzEIF+KORYr8MPY37TFoVkBauHQKBgQDNMaiPY4eDQfLZIkmKWL1l9zkLlg5CkZFp\nkW3lbxAEJzZoYD2IsNAApiMLgHz40hUhZ0afPlQTypYDcSJYH/Sl5W6aW+R6yizu\nrDbN13zlA0zIIkqA7KcE9uzTnxLmWblCv2XwgrF/Gj+cnMpYhqUFZFdA0q9I00sV\n8riltSkMuQKBgQDG7A6uhMlf56LZ50Y7W/ibrlrZ9t982miZD8fcj+EyGChdpTsw\nVT7J6bb0pounIy5qXMvRi5QwnyC733Kgiet6FoiYsJz43cJXl+W37LDJ5YvoNqv4\n8JXNc+k27qbHTrA/797wHdLbs8fTZa+vLhVfpAZefgd/VAeXI9kYDNki0QKBgQCd\n114vdsNuL5PMfXiOiHag8gyaogI0KN/vkiQ0QjvSxgsvPSD4ffJzHVmF5n+7s3b3\nrAcCRiLM2qCM40ElAufhmVx8NsXJwq3Ppv+9Vc7IJ8KvjNk81U4hHoTMwOf78/bz\npmGXIiHBgQJ/yYhJksFsJWSNA8Q8Q/TVXFG3fmSmWQKBgQCLi89o8FVeI2R8QX7H\nzrbc+rFB7v5X2/8GHnYzHlF+tN5bE9EOxd1+AxCTClmKRlKoh/MYT/YMz1XV0bjc\nCFkRQ0Mue1mCwHsBWjtsJx6xjZPltMljdkZMTg+fn4+2lOo51kqjakfdqeYbj6zR\nChiFmsLlWWfnfnYpU/rrtqhmXQ==\n-----END PRIVATE KEY-----\n",
+    "client_email": "neul-chat-app@chat-app-429602.iam.gserviceaccount.com",
+    "client_id": "112424880918566843848",
+    "auth_uri": "https://accounts.google.com/o/oauth2/auth",
+    "token_uri": "https://oauth2.googleapis.com/token",
+    "auth_provider_x509_cert_url": "https://www.googleapis.com/oauth2/v1/certs",
+    "client_x509_cert_url": "https://www.googleapis.com/robot/v1/metadata/x509/neul-chat-app%40chat-app-429602.iam.gserviceaccount.com",
+    "universe_domain": "googleapis.com"
+}
+
 
 
 // const key = JSON.parse(process.env.GOOGLE_CLOUD_KEY);
