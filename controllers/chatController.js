@@ -26,7 +26,7 @@ const handleChatRequest = async (req, res) => {
         // Trả về phản hồi và dữ liệu âm thanh dưới dạng base64
         res.json({ response, audioContent });
     } catch (error) {
-        res.status(500).json({ error: 'Something went wrong', detail: error.toString() });
+        res.status(500).json({ error: 'Something went wrong', detail: error });
     }
 };
 
