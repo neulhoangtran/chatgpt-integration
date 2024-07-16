@@ -11,8 +11,8 @@ import audioConfig from '../config/config-audio.js';
 const key = {
     "type": "service_account",
     "project_id": "chat-app-429602",
-    "private_key_id": "ea12ab2fa2868e004cdca315995e68edfec34104",
-    "private_key": "-----BEGIN PRIVATE KEY-----\nMIIEvwIBADANBgkqhkiG9w0BAQEFAASCBKkwggSlAgEAAoIBAQCw9CUYBw+8PSw3\naYT2AgfOzyWk36jbord94UQ/J+TGNYpwGBCfPiSIcZhjs/aCy0RmWpAiM/4lQeQ7\nHyJeTNHqukO/D+q+UAQoeoGtNs2yfPEOLXGuEfPyCkcawph4rcwD4XLNi69rBeZe\nE2mg2It0BKhSzEZqoN+u5CstPAu0hiM5Z8saT+8Mzn8KefRf+zzORDG775RlNWIC\noTLXp4/qMeMIL0uKfov93zoMmTeImyedCpa1AgI1cAbDcpFsYpJTHYW1Tw243Mow\nxHhXmLy4fCkC9DlgjL+V9Z9KZDnH/GxaOgwdbdc5WgGwQAQK4VA3CsHDWp3o+/7n\nScOUMi71AgMBAAECggEAJBXpwZxhCllsPLGdToDMAFHwgo6k1AN7CWXoobt8NSqC\nfIj/zMWitBt8QOrYfMRAguH5jiwNqiHljePzwYjHbyeEfMBddemB65JOAxmPuZQu\noV5FlkKtfYC4jt27s7J3jhwJ6h5QC9J0b99kFUvLpoFzpQzo2EJN00/O+UbLOUkh\npIXwpLCR71UYada08oXYFP+WJQbB4dEnQrgDGpV15/+n235TyNrAo2XNXQXPL1vH\n45W+BLtw3Iow5K5GMqQTmAZ/0nagrVeKDCgKObwVrVf57I1ne0g/WG6ao5fSdtP2\nH3hUwUaBz8qWoUZHM0WLiG+jAc17bm4zCnCMlnLtmQKBgQDcxHWLzEorQIB3WPm3\nfa9UbVgBU0seVkapLVCrkTfc36ucYoh+ujM4ew2SFYnUrZG8zTOL60kTCX3AA4fu\n6/0sawnCaUhD0FO+bWhoQy5GrFtFfsLNnEkrRbiRoE3rhuz4qlmDKwAX47chixpK\nzEIF+KORYr8MPY37TFoVkBauHQKBgQDNMaiPY4eDQfLZIkmKWL1l9zkLlg5CkZFp\nkW3lbxAEJzZoYD2IsNAApiMLgHz40hUhZ0afPlQTypYDcSJYH/Sl5W6aW+R6yizu\nrDbN13zlA0zIIkqA7KcE9uzTnxLmWblCv2XwgrF/Gj+cnMpYhqUFZFdA0q9I00sV\n8riltSkMuQKBgQDG7A6uhMlf56LZ50Y7W/ibrlrZ9t982miZD8fcj+EyGChdpTsw\nVT7J6bb0pounIy5qXMvRi5QwnyC733Kgiet6FoiYsJz43cJXl+W37LDJ5YvoNqv4\n8JXNc+k27qbHTrA/797wHdLbs8fTZa+vLhVfpAZefgd/VAeXI9kYDNki0QKBgQCd\n114vdsNuL5PMfXiOiHag8gyaogI0KN/vkiQ0QjvSxgsvPSD4ffJzHVmF5n+7s3b3\nrAcCRiLM2qCM40ElAufhmVx8NsXJwq3Ppv+9Vc7IJ8KvjNk81U4hHoTMwOf78/bz\npmGXIiHBgQJ/yYhJksFsJWSNA8Q8Q/TVXFG3fmSmWQKBgQCLi89o8FVeI2R8QX7H\nzrbc+rFB7v5X2/8GHnYzHlF+tN5bE9EOxd1+AxCTClmKRlKoh/MYT/YMz1XV0bjc\nCFkRQ0Mue1mCwHsBWjtsJx6xjZPltMljdkZMTg+fn4+2lOo51kqjakfdqeYbj6zR\nChiFmsLlWWfnfnYpU/rrtqhmXQ==\n-----END PRIVATE KEY-----\n",
+    "private_key_id": "5f50788efc9066f39d87877cd7847aacd1e84633",
+    "private_key": "-----BEGIN PRIVATE KEY-----\nMIIEvgIBADANBgkqhkiG9w0BAQEFAASCBKgwggSkAgEAAoIBAQDhDBZ7Ft0SXde8\nCUb/baTkH07CnXFilkw3aFyAJ64cQRNMxtrFIAhjlmScLXsolTirpCZn2P81zr1v\nrfWZGQYiPt8D18I/FeL+D+atW1Wp5A3gWEEKJJE0eVjGrRmnMl6cDnro495SnBwP\nuCbP59ZzMz2PkF7/LehaCwGbBXJab7WHZq6X1oWG2RuIsWoSc0+0R5ylqeMnlSea\n2FwSfsxoBJS9Cnn3IJxayT9ZQJAvzDdBuHS/tD2u9stwTJrPp6lWwvX/u5BpovGq\nEnj6mMhHccEGTFL6OAOweozaTUN3BGi5thEXAv7SGI1HO3T8zkwvSoLPmhaBcFAW\nAeoBJakhAgMBAAECggEABjlLNAXMdxDMt/hBto5ko6OuUwM6cOop85jKz/OXwATn\nK+SOcdumAjTo32cB/C0vYH/UmBQtoNhnA0EODtah3i3RtqZDNvz25CAoc/FcsyFY\njdIZKmClIYywWJvOKL1tkLV1MahEQBHaGSDizjV1fjdYt2wq3j/Id0Ab52l7TdLF\n8kfSxMfV4of5jRvNN+iWfBobYcpj5wfpHbXsZhKXsMTlhtFMYmlGz+9TM5DpY9tD\na5gk0i/CRVVdarPzyNQTKWoPmYqmia+x8ApGFf/VEGRv767tYIjQAqJLEw+DPMXM\nJA/LYxMduXX1tiYaSAHY6HbwzYfXRJFTJj4TFu4tyQKBgQDxWMhqJ29wiOUi8N6i\n2IknhH/N9ipKypnnBHjt4NXDVxfB7Eb4wd9TjI5xBLldVMnAXvmh2OGpUmC7JEUQ\nFfDLhUm03LOC9+PQVnQycS8Y8qbdWNbKKOal7xvcmMs0CONQpTM5rutcAPBFUXko\n1hXlPqMkC8VPshPdoabkKygENwKBgQDutfZ+oiTdKNiO2rv1h7afj2rKElCSUS/R\nYj9+Z7FkNF7dHMRbMzHxsXCfYFrdb3aEbsTvu+k5AcjvoJq8kn1vi8Pn0WDqpo+S\ntQwJhio2uGLM2BoCqwZSNUGL4mZ29GHv/JLpmibzjI6jH5JjMO/boQj5yOPlgAdI\nuqGLM9ZBZwKBgBNlcj3ty2v85IVpXEs0Idm2MVtJJF78Z2AEoP9lKWjYkAU6yv1k\n/2DElBILMiaJEOnP+DoEpyYng7SmlpJTYRXKMYFCl364E2wD9rSzGfjkT3rMj/6R\nSPAfBls1QGd/K12o2TQSlcHAJY88nAMnKX1SCmR0ObhM9IHEYxhFS6MDAoGBAK4+\niKU6+imtTRZJt/WrkLS73TmPUNzdAkiWrL46NpRsXeqMuw/PON+xpAHSNcF5QUu+\nB2bvBXilQuUXmJuZWpJ3tRKcFWBzIE34dcbl9h5nTUc1Xxcfe8e6NBRFuIGQNYUW\nGq8F5PTWXq/XteVNrWfmDkU2TJQTdj2ybYTM29J1AoGBAKsKoCNeAOXpvw0kpOQG\nIduWAX7ewYV/siTZyljBx2W3C294JXjnLs0hAm9Ir3B1FXtKCOmvnwiBypZq+gJ8\nhmYuFRdBByVfTnvT8MQg9X+aJFefZI6mXnX0FqdwufLgB+DjmBGs8MwewI9oKPdo\nIJoAHmfANYA+PgIoqOPSMupc\n-----END PRIVATE KEY-----\n",
     "client_email": "neul-chat-app@chat-app-429602.iam.gserviceaccount.com",
     "client_id": "112424880918566843848",
     "auth_uri": "https://accounts.google.com/o/oauth2/auth",
@@ -20,7 +20,8 @@ const key = {
     "auth_provider_x509_cert_url": "https://www.googleapis.com/oauth2/v1/certs",
     "client_x509_cert_url": "https://www.googleapis.com/robot/v1/metadata/x509/neul-chat-app%40chat-app-429602.iam.gserviceaccount.com",
     "universe_domain": "googleapis.com"
-}
+  }
+  
 
 
 
@@ -29,14 +30,14 @@ const client = new TextToSpeechClient({ credentials: key });
 
 const handleChatRequest = async (req, res) => {
     try {
-        const { prompt } = req.body;
+        const { prompt, character } = req.body;
         const response = await getChatResponse(prompt);
 
         // Phát hiện ngôn ngữ từ phản hồi
         const detectedLang = detectLanguage(response);
 
         // Chuyển đổi phản hồi từ ChatGPT thành giọng nói
-        const audioContent = await textToSpeechConversion(response, detectedLang);
+        const audioContent = await textToSpeechConversion(response, detectedLang, character);
 
         // const a = await listVoices();
         // Trả về phản hồi và dữ liệu âm thanh dưới dạng base64
@@ -54,10 +55,10 @@ const detectLanguage = (text) => {
     return 'en'; // Mặc định là tiếng Anh nếu không phát hiện được
 }
 
-const textToSpeechConversion = async (text, lang) => {
+const textToSpeechConversion = async (text, lang, character = 'shen') => {
     const request = {
         input: { text: text },
-        voice: { languageCode: audioConfig[lang].languageCode, name: audioConfig[lang].name },
+        voice: { languageCode: audioConfig[character][lang].languageCode, name: audioConfig[character][lang].name },
         audioConfig: { audioEncoding: 'MP3' },
     };
 

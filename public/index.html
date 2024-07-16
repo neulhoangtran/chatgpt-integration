@@ -1,52 +1,155 @@
 <!DOCTYPE html>
 <html lang="en">
-
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Three.js Mixamo Character</title>
+    <title>Chat App</title>
     <style>
-        body {
-            margin: 0;
+        body { margin: 0; overflow-x: hidden;}
+        canvas { display: block; }
+        #characterSelect {
+            display: flex;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+        #characterSelect img {
+            width: 100px;
+            height: auto;
+            margin-right: 10px;
+            cursor: pointer;
+        }
+        #characterSelect label {
+            display: flex;
+            align-items: center;
+            cursor: pointer;
+        }
+        div#startScreen {
+            display: flex;
+            width: 100%;
+            height: 100vh;
+            align-items: center;
+            justify-content: center;
+            flex-direction: column;
         }
 
-        canvas {
-            display: block;
+        div#startScreen div#characterSelect {
+            /* display: flex; */
+            /* flex-direction: column; */
+            column-gap: 20px;
+        }
+
+        div#startScreen div#characterSelect label {
+            flex-direction: column;
+        }
+
+        div#startScreen img {
+            width: 251px;
+            height: 321px;
+            object-fit: contain;
+            border-radius: 10px;
+            margin: 0;
+            margin-bottom: 10px;
+        }
+
+        button#startButton {
+            padding: 10px 30px;
+            border-radius: 4px;
+            border: 1px solid #2d2b5c;
+            background: #2d2b5c;
+            color: #fff;
+            cursor: pointer;
+        }
+
+        button#startButton:hover {
+            opacity: .8;
+        }
+        div#mainContent {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+        }
+        div#mainContent .bottom-chat {
+            position: absolute;
+            bottom: 50px;
+            max-width: 500px;
+            margin: auto;
+            left: 50%;
+            transform: translateX(-50%);
+            align-items: center;
+            display: flex;
+            column-gap: 20px;
+        }
+
+        div#mainContent .bottom-chat .bottom-chat {
+            display: flex;
+        }
+
+        textarea#prompt {
+            height: auto;
+            padding: 10px 20px;
+            font-size: 14px;
+            line-height: 14px;
+            /* min-height: 70px; */
+            border-radius: 10px;
+        }
+
+        textarea#prompt::-webkit-input-placeholder {
+            font-size: 14px;
+            line-height: 14px;
+        }
+
+        button#sendButton {
+            padding: 14px 30px;
+            border-radius: 4px;
+            border: 1px solid #2d2b5c;
+            background: #2d2b5c;
+            color: #fff;
+            cursor: pointer;
+        }
+
+        button#sendButton:hover {
+            opacity: 0.8;
+        }
+        div#response {
+            background: #ffffff73;
+            max-width: 300px;
+            padding: 20px;
+            border-radius: 30px;
+            position: absolute;
+            left: 52%;
+            top: 10%;
         }
     </style>
 </head>
-
 <body>
-    <button onclick="playAnimation('wave')">Vẫy tay xin chào</button>
-    <button onclick="playAnimation('goodbye')">Tạm biệt</button>
-    <button onclick="playAnimation('happy')">Vui</button>
-    <button onclick="playAnimation('cry')">Khóc</button>
-    <button onclick="playAnimation('sad')">Buồn</button>
+    <div id="startScreen">
+        <div id="characterSelect">
+            <label>
+                <img src="nana.jpg" alt="Nana" id="nanaImage">
+                <input type="radio" name="character" value="nana" id="nanaRadio"> Nana
+            </label>
+            <label>
+                <img src="shen.jpg" alt="Shen" id="shenImage">
+                <input type="radio" name="character" value="shen" id="shenRadio"> Shen
+            </label>
+        </div>
+        <button id="startButton">Bắt đầu</button>
+    </div>
+    <div id="mainContent" style="display: none;">
+        
+        <div class="bottom-chat">
+            <textarea id="prompt" placeholder="Enter your prompt here"></textarea>
+            <button id="sendButton">Send</button>
+        </div>
+        
+        <!-- <button onclick="playAnimation('wave')">Vẫy tay xin chào</button>
+        <button onclick="playAnimation('goodbye')">Tạm biệt</button>
+        <button onclick="playAnimation('happy')">Vui</button>
+        <button onclick="playAnimation('cry')">Khóc</button>
+        <button onclick="playAnimation('sad')">Buồn</button>
+        <button id="recordButton">Start/Stop Recording</button> -->
+        <div id="response"></div>
+    </div>
     <script type="module" src="script.js"></script>
 </body>
-
 </html>
-
-
-
-<!-- <!DOCTYPE html>
-<html lang="en">
-
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>ChatGPT App</title>
-</head>
-
-<body>
-    <h1>ChatGPT App</h1>
-    <textarea id="prompt" placeholder="Enter your prompt here"></textarea><br>
-    <button id="sendButton">Send</button>
-    <button id="recordButton">Record</button>
-    <h2>Response:</h2>
-    <p id="response"></p>
-
-    <script type="module" src="script.js"></script>
-</body>
-
-</html> -->

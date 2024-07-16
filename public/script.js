@@ -1,79 +1,145 @@
-// async function sendPrompt() {
-//     const prompt = document.getElementById('prompt').value;
-
-//     const response = await fetch('/api/chat', {
-//         method: 'POST',
-//         headers: {
-//             'Content-Type': 'application/json'
-//         },
-//         body: JSON.stringify({ prompt })
-//     });
-
-//     const data = await response.json();
-//     document.getElementById('response').innerText = data.response;
-
-//     const audioContent = data.audioContent;
-//     const audioBlob = new Blob([Uint8Array.from(atob(audioContent), c => c.charCodeAt(0))], { type: 'audio/mp3' });
-//     const audioUrl = URL.createObjectURL(audioBlob);
-
-//     const audio = new Audio(audioUrl);
-//     audio.play();
-// }
-
-// document.getElementById('sendButton').addEventListener('click', sendPrompt);
-
-
-// const recordButton = document.getElementById('recordButton');
-// const recognition = new (window.SpeechRecognition || window.webkitSpeechRecognition)();
-
-// recognition.interimResults = false;
-// recognition.lang = 'en-US';
-// recognition.continuous = true;
-
-// let lastResultTime = Date.now();
-// let silenceTimeout;
-
-// recognition.onresult = (event) => {
-//     const transcript = event.results[0][0].transcript;
-//     console.log(transcript)
-//     document.getElementById('prompt').value = transcript;
-
-//     lastResultTime = Date.now();
-//     clearTimeout(silenceTimeout);
-//     silenceTimeout = setTimeout(() => {
-//         recognition.stop();
-//         console.log('Stopped due to silence.');
-//     }, 2000);
-// };
-
-
-// recognition.onerror = (event) => {
-//     console.error('Speech recognition error detected: ' + event.error);
-// };
-
-
-// recordButton.addEventListener('click', () => {
-//     recognition.start();
-//     lastResultTime = Date.now();
-//     silenceTimeout = setTimeout(() => {
-//         recognition.stop();
-//         console.log('Stopped due to silence.');
-//     }, 2000);
-// });
 import * as THREE from 'https://cdn.jsdelivr.net/npm/three@0.127.0/build/three.module.js';
 import { FBXLoader } from 'https://cdn.jsdelivr.net/npm/three@0.127.0/examples/jsm/loaders/FBXLoader.js';
 import { OrbitControls } from 'https://cdn.jsdelivr.net/npm/three@0.127.0/examples/jsm/controls/OrbitControls.js';
 
 let scene, camera, renderer, mixer, clock, character, actions = {};
+let currentAction, idleAction;
+let recognition;
+let silenceTimeout;
+let isAPICalling = false;
+let selectedCharacter = 'nana';
 
-init();
-animate();
+document.getElementById('startButton').addEventListener('click', () => {
+    document.getElementById('startScreen').style.display = 'none';
+    document.getElementById('mainContent').style.display = 'block';
+    init();
+    animate();
+    initializeSpeechRecognition();
+});
+
+document.getElementById('nanaRadio').addEventListener('change', (event) => {
+    if (event.target.checked) {
+        selectedCharacter = 'nana';
+        // loadCharacter(selectedCharacter);
+    }
+});
+
+document.getElementById('shenRadio').addEventListener('change', (event) => {
+    if (event.target.checked) {
+        selectedCharacter = 'shen';
+        // loadCharacter(selectedCharacter);
+    }
+});
+
+async function sendPrompt() {
+    if (isAPICalling) return;
+
+    isAPICalling = true;
+    const prompt = document.getElementById('prompt').value;
+    // const character = document.getElementById('character').value;
+
+    // Tắt nhận diện giọng nói trước khi gửi request
+    recognition.stop();
+    clearTimeout(silenceTimeout);
+
+    const response = await fetch('/api/chat', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({ prompt, character: selectedCharacter })
+    });
+
+    const data = await response.json();
+    const reply = data.response;
+
+    document.getElementById('response').innerText = reply;
+
+    if (!reply) return
+
+    // Kiểm tra các trạng thái cụ thể trước
+    if (isGreeting(reply)) {
+        playAnimation('wave');
+    } else if (isGoodbye(reply)) {
+        playAnimation('goodbye');
+    } else if (isHappy(reply)) {
+        playAnimation('happy');
+    } else if (isSad(reply)) {
+        playAnimation('sad');
+    } else if (isCrying(reply)) {
+        playAnimation('cry');
+    } else {
+        // Nếu không có trạng thái nào khớp, chuyển sang trạng thái talking
+        playAnimation('talking');
+    }
+
+    const audioContent = data.audioContent;
+    const audioBlob = new Blob([Uint8Array.from(atob(audioContent), c => c.charCodeAt(0))], { type: 'audio/mp3' });
+    const audioUrl = URL.createObjectURL(audioBlob);
+
+    const audio = new Audio(audioUrl);
+    audio.play();
+
+    // Bật lại nhận diện giọng nói sau khi audio đã kết thúc
+    audio.onended = () => {
+        recognition.start();
+        isAPICalling = false;
+        playAnimation('idle');
+        console.log('Speech recognition restarted.');
+    };
+}
+
+document.getElementById('sendButton').addEventListener('click', sendPrompt);
+
+function initializeSpeechRecognition() {
+    recognition = new (window.SpeechRecognition || window.webkitSpeechRecognition)();
+    recognition.interimResults = false;
+    recognition.lang = 'en-US';
+    recognition.continuous = true;
+
+    recognition.onresult = (event) => {
+        if (isAPICalling) return;
+
+        const transcript = event.results[0][0].transcript;
+        console.log(transcript);
+        document.getElementById('prompt').value = transcript;
+
+        clearTimeout(silenceTimeout);
+        silenceTimeout = setTimeout(() => {
+            recognition.stop();
+            sendPrompt();
+            console.log('Stopped due to silence and sent prompt.');
+        }, 2000);
+    };
+
+    recognition.onerror = (event) => {
+        console.error('Speech recognition error detected: ' + event.error);
+    };
+
+    recognition.onend = () => {
+        if (!isAPICalling) {
+            console.log('Speech recognition ended, restarting...');
+            recognition.start();
+        }
+    };
+
+    recognition.start();
+}
+
+document.getElementById('recordButton').addEventListener('click', () => {
+    if (recognition) {
+        recognition.stop();
+        console.log('Speech recognition manually stopped.');
+    } else {
+        initializeSpeechRecognition();
+        console.log('Speech recognition manually started.');
+    }
+});
 
 function init() {
     scene = new THREE.Scene();
     scene.background = new THREE.Color(0xa0a0a0);
-    // Giảm hoặc loại bỏ sương mù
-    scene.fog = new THREE.Fog(0xa0a0a0, 20, 50); // Tăng khoảng cách sương mù
+    scene.fog = new THREE.Fog(0xa0a0a0, 20, 50);
 
     renderer = new THREE.WebGLRenderer({ antialias: true });
     renderer.setPixelRatio(window.devicePixelRatio);
@@ -91,6 +157,7 @@ function init() {
 
     const dirLight = new THREE.DirectionalLight(0xffffff);
     dirLight.position.set(3, 10, 10);
+    dirLight.castShadow = true; // Cho phép đổ bóng
     scene.add(dirLight);
 
     const grid = new THREE.GridHelper(10, 10, 0x888888, 0x444444);
@@ -100,40 +167,58 @@ function init() {
     controls.target.set(0, 1, 0);
     controls.update();
 
-    const loader = new FBXLoader();
-    loader.load('neul.fbx', (fbx) => {
-        character = fbx;
-        character.scale.set(0.01, 0.01, 0.01); // Điều chỉnh kích thước nhân vật nếu cần
-        mixer = new THREE.AnimationMixer(character);
-        scene.add(character);
-
-        // Tải và áp dụng hoạt hình nghỉ
-        loader.load('idle.fbx', (anim) => {
-            const idleAction = mixer.clipAction(anim.animations[0]);
-            idleAction.play();
-            actions['idle'] = idleAction;
-        });
-
-        loadAnimations();
-    });
+    loadCharacter(selectedCharacter);
 
     window.addEventListener('resize', onWindowResize);
 }
 
-function loadAnimations() {
+function loadCharacter(characterName) {
+    const loader = new FBXLoader();
+    const characterPath = characterName === 'nana' ? 'nana.fbx' : 'shen.fbx';
+    loader.load(characterPath, (fbx) => {
+        if (character) {
+            scene.remove(character);
+        }
+        character = fbx;
+        character.scale.set(0.015, 0.015, 0.015); // Điều chỉnh kích thước nhân vật nếu cần
+        character.position.set(0, 0, 0); // Đảm bảo nhân vật ở vị trí chính xác
+        mixer = new THREE.AnimationMixer(character);
+        scene.add(character);
+
+        loader.load(`${characterName}/idle.fbx`, (anim) => {
+            idleAction = mixer.clipAction(anim.animations[0]);
+            idleAction.play();
+            actions['idle'] = idleAction;
+        });
+
+        loadAnimations(characterName);
+    });
+}
+
+function loadAnimations(characterName) {
     const loader = new FBXLoader();
     const animations = {
-        wave: 'waving.fbx',
-        goodbye: 'path/to/goodbye.fbx',
-        happy: 'path/to/happy.fbx',
-        cry: 'crying.fbx',
-        sad: 'path/to/sad.fbx'
+        wave: `${characterName}/waving.fbx`,
+        goodbye: `${characterName}/goodbye.fbx`,
+        happy: `${characterName}/happy.fbx`,
+        cry: `${characterName}/crying.fbx`,
+        sad: `${characterName}/sad.fbx`,
+        talking: `${characterName}/stand-talking.fbx` // Thêm hoạt hình talking
     };
 
     for (const [name, path] of Object.entries(animations)) {
         loader.load(path, (anim) => {
             const action = mixer.clipAction(anim.animations[0]);
             actions[name] = action;
+
+            // Lắng nghe sự kiện kết thúc của mỗi hành động
+            action.clampWhenFinished = true;
+            action.loop = THREE.LoopOnce;
+            action.addEventListener('finished', () => {
+                if (currentAction === action) {
+                    playAnimation('idle');
+                }
+            });
         });
     }
 
@@ -145,6 +230,31 @@ function loadAnimations() {
             actions[name].reset().play();
         }
     };
+}
+
+function isGreeting(text) {
+    const greetings = ['hello', 'hey', 'greetings', 'howdy', 'bonjour', 'hola', 'chào'];
+    return greetings.some(greeting => text.toLowerCase().includes(greeting));
+}
+
+function isGoodbye(text) {
+    const goodbyes = ['goodbye', 'bye', 'see you', 'farewell', 'later'];
+    return goodbyes.some(goodbye => text.toLowerCase().includes(goodbye));
+}
+
+function isHappy(text) {
+    const happyWords = ['happy', 'joy', 'glad', 'pleased', 'delighted'];
+    return happyWords.some(happy => text.toLowerCase().includes(happy));
+}
+
+function isSad(text) {
+    const sadWords = ['sad', 'unhappy', 'down', 'depressed', 'blue'];
+    return sadWords.some(sad => text.toLowerCase().includes(sad));
+}
+
+function isCrying(text) {
+    const cryingWords = ['cry', 'crying', 'tears', 'weep', 'weeping'];
+    return cryingWords.some(crying => text.toLowerCase().includes(crying));
 }
 
 function onWindowResize() {
