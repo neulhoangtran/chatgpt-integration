@@ -1,34 +1,45 @@
-const chat = require('../services/chat');
-const textToSpeech = require('@google-cloud/text-to-speech');
-const config = require('../config/config-voice.json'); // Đọc file cấu hình mới
-
+import { TextToSpeechClient } from '@google-cloud/text-to-speech';
+import { franc } from 'franc';
+import { getChatResponse } from '../services/chat.js';
+import audioConfig from '../config/config-audio.js';
+// const audioConfig = require('../config/config-audio.json');
 // Tạo client
-const client = new textToSpeech.TextToSpeechClient({
-    keyFilename: 'config/service-account-key.json'
+const client = new TextToSpeechClient({
+    keyFilename: 'config/service-account-key.json' // Đường dẫn tới file khóa dịch vụ
 });
 
-const chatController = {
-    async handleChatRequest(req, res) {
-        try {
-            const { prompt } = req.body;
-            const response = await chat.getChatResponse(prompt);
-            const audioContent = [];
-            // Chuyển đổi phản hồi từ ChatGPT thành giọng nói
-            // const audioContent = await textToSpeechConversion(response);
+const handleChatRequest = async (req, res) => {
+    try {
+        const { prompt } = req.body;
+        const response = await getChatResponse(prompt);
 
-            // Trả về phản hồi và dữ liệu âm thanh dưới dạng base64
-            res.json({ response, audioContent, test: 123 });
-        } catch (error) {
-            res.status(500).json({ error: 'Something went wrong 2', detail: error });
-        }
+        // Phát hiện ngôn ngữ từ phản hồi
+        const detectedLang = detectLanguage(response);
+
+        // Chuyển đổi phản hồi từ ChatGPT thành giọng nói
+        const audioContent = await textToSpeechConversion(response, detectedLang);
+
+        // const a = await listVoices();
+        // Trả về phản hồi và dữ liệu âm thanh dưới dạng base64
+        res.json({ response, audioContent });
+    } catch (error) {
+        res.status(500).json({ error: 'Something went wrong', detail: error.toString() });
     }
 };
 
-async function textToSpeechConversion(text) {
+// Chuyển đổi detectLanguage thành arrow function
+const detectLanguage = (text) => {
+    const langCode = franc(text);
+    if (langCode === 'eng') return 'en';
+    if (langCode === 'vie') return 'vi';
+    return 'en'; // Mặc định là tiếng Anh nếu không phát hiện được
+}
+
+const textToSpeechConversion = async (text, lang) => {
     const request = {
         input: { text: text },
-        voice: { languageCode: config.languageCode, ssmlGender: config.ssmlGender },
-        audioConfig: { audioEncoding: config.audioEncoding },
+        voice: { languageCode: audioConfig[lang].languageCode, name: audioConfig[lang].name },
+        audioConfig: { audioEncoding: 'MP3' },
     };
 
     const [response] = await client.synthesizeSpeech(request);
@@ -36,4 +47,17 @@ async function textToSpeechConversion(text) {
     return audioContent;
 }
 
-module.exports = chatController;
+export { handleChatRequest };
+
+
+
+async function listVoices() {
+    const [result] = await client.listVoices({});
+    const voices = result.voices;
+    console.log('Available vi-VN voices:');
+    voices.forEach(voice => {
+        if (voice.languageCodes.includes('vi-VN')) {
+            console.log(`Name: ${voice.name}, Language Codes: ${voice.languageCodes.join(', ')}`);
+        }
+    });
+}

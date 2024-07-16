@@ -2,6 +2,7 @@
     "name": "chatgpt-app",
     "version": "1.0.0",
     "description": "",
+    "type": "module",
     "main": "app.js",
     "scripts": {
         "start": "nodemon app.js"
@@ -11,6 +12,7 @@
         "axios": "^0.21.1",
         "dotenv": "^8.2.0",
         "express": "^4.17.1",
+        "franc": "^6.2.0",
         "openai": "^4.52.7"
     },
     "devDependencies": {

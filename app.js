@@ -1,7 +1,7 @@
-const express = require('express');
-const bodyParser = require('body-parser');
-const chatRoutes = require('./routes/chatRoutes');
-const config = require('./config/config');
+import express from 'express';
+import bodyParser from 'body-parser';
+import chatRoutes from './routes/chatRoutes.js';
+import config from './config/config.js';
 
 const app = express();
 
