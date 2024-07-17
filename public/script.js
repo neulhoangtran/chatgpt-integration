@@ -9,25 +9,28 @@ let silenceTimeout;
 let isAPICalling = false;
 let selectedCharacter = 'nana';
 
+init();
 document.getElementById('startButton').addEventListener('click', () => {
     document.getElementById('startScreen').style.display = 'none';
-    document.getElementById('mainContent').style.display = 'block';
-    init();
-    animate();
-    initializeSpeechRecognition();
+    document.getElementById('loadingScreen').classList.add('active');
+    loadCharacter(() => {
+        document.getElementById('loadingScreen').classList.remove('active');
+        document.getElementById('mainContent').style.display = 'block';
+        animate();
+        initializeSpeechRecognition();
+        loadAnimations();
+    });
 });
 
 document.getElementById('nanaRadio').addEventListener('change', (event) => {
     if (event.target.checked) {
         selectedCharacter = 'nana';
-        // loadCharacter(selectedCharacter);
     }
 });
 
 document.getElementById('shenRadio').addEventListener('change', (event) => {
     if (event.target.checked) {
         selectedCharacter = 'shen';
-        // loadCharacter(selectedCharacter);
     }
 });
 
@@ -36,7 +39,7 @@ async function sendPrompt() {
 
     isAPICalling = true;
     const prompt = document.getElementById('prompt').value;
-    // const character = document.getElementById('character').value;
+    const character = selectedCharacter;
 
     // Tắt nhận diện giọng nói trước khi gửi request
     recognition.stop();
@@ -47,19 +50,16 @@ async function sendPrompt() {
         headers: {
             'Content-Type': 'application/json'
         },
-        body: JSON.stringify({ prompt, character: selectedCharacter })
+        body: JSON.stringify({ prompt, character }) // Truyền tên nhân vật vào yêu cầu
     });
 
     const data = await response.json();
     const reply = data.response;
-
     document.getElementById('response').innerText = reply;
-
-    if (!reply) return
 
     // Kiểm tra các trạng thái cụ thể trước
     if (isGreeting(reply)) {
-        playAnimation('wave');
+        playAnimation('waving');
     } else if (isGoodbye(reply)) {
         playAnimation('goodbye');
     } else if (isHappy(reply)) {
@@ -126,15 +126,15 @@ function initializeSpeechRecognition() {
     recognition.start();
 }
 
-document.getElementById('recordButton').addEventListener('click', () => {
-    if (recognition) {
-        recognition.stop();
-        console.log('Speech recognition manually stopped.');
-    } else {
-        initializeSpeechRecognition();
-        console.log('Speech recognition manually started.');
-    }
-});
+// document.getElementById('recordButton').addEventListener('click', () => {
+//     if (recognition) {
+//         recognition.stop();
+//         console.log('Speech recognition manually stopped.');
+//     } else {
+//         initializeSpeechRecognition();
+//         console.log('Speech recognition manually started.');
+//     }
+// });
 
 function init() {
     scene = new THREE.Scene();
@@ -166,44 +166,56 @@ function init() {
     const controls = new OrbitControls(camera, renderer.domElement);
     controls.target.set(0, 1, 0);
     controls.update();
-
-    loadCharacter(selectedCharacter);
-
-    window.addEventListener('resize', onWindowResize);
 }
 
-function loadCharacter(characterName) {
+function loadCharacter(callback) {
     const loader = new FBXLoader();
-    const characterPath = characterName === 'nana' ? 'nana.fbx' : 'shen.fbx';
-    loader.load(characterPath, (fbx) => {
-        if (character) {
-            scene.remove(character);
-        }
-        character = fbx;
-        character.scale.set(0.015, 0.015, 0.015); // Điều chỉnh kích thước nhân vật nếu cần
-        character.position.set(0, 0, 0); // Đảm bảo nhân vật ở vị trí chính xác
-        mixer = new THREE.AnimationMixer(character);
-        scene.add(character);
+    const characterPath = selectedCharacter === 'nana' ? 'nana.fbx' : 'shen.fbx';
 
-        loader.load(`${characterName}/idle.fbx`, (anim) => {
-            idleAction = mixer.clipAction(anim.animations[0]);
-            idleAction.play();
-            actions['idle'] = idleAction;
+    caches.open('character-cache').then(cache => {
+        cache.match(characterPath).then(response => {
+            if (response) {
+                response.blob().then(blob => {
+                    const url = URL.createObjectURL(blob);
+                    loader.load(url, (fbx) => {
+                        character = fbx;
+                        character.scale.set(0.015, 0.015, 0.015); // Điều chỉnh kích thước nhân vật nếu cần
+                        character.position.set(0, 0, 0); // Đảm bảo nhân vật ở vị trí chính xác
+                        mixer = new THREE.AnimationMixer(character);
+                        scene.add(character);
+                        loader.load(`${selectedCharacter}/idle.fbx`, (anim) => {
+                            idleAction = mixer.clipAction(anim.animations[0]);
+                            idleAction.play();
+                            actions['idle'] = idleAction;
+                        });
+
+                        if (callback) callback();
+                    },
+                        (xhr) => {
+
+                            const progress = Math.round((xhr.loaded / xhr.total) * 100);
+                            document.getElementById('progress').style.width = `${progress}%`;
+                        }, (error) => {
+                            console.error(error);
+                        });
+                });
+            } else {
+                fetchAndCacheCharacter(characterPath, cache, loader, callback);
+            }
         });
-
-        loadAnimations(characterName);
     });
 }
 
-function loadAnimations(characterName) {
+function loadAnimations() {
     const loader = new FBXLoader();
     const animations = {
-        wave: `${characterName}/waving.fbx`,
-        goodbye: `${characterName}/goodbye.fbx`,
-        happy: `${characterName}/happy.fbx`,
-        cry: `${characterName}/crying.fbx`,
-        sad: `${characterName}/sad.fbx`,
-        talking: `${characterName}/stand-talking.fbx` // Thêm hoạt hình talking
+        waving: `${selectedCharacter}/waving.fbx`,
+        // goodbye: `${selectedCharacter}/goodbye.fbx`,
+        // happy: `${selectedCharacter}/happy.fbx`,
+        // cry: `${selectedCharacter}/crying.fbx`,
+        // sad: `${selectedCharacter}/sad.fbx`,
+        idle: `${selectedCharacter}/idle.fbx`,
+        talking: `${selectedCharacter}/stand-talking.fbx` // Thêm hoạt hình talking
     };
 
     for (const [name, path] of Object.entries(animations)) {
@@ -212,13 +224,17 @@ function loadAnimations(characterName) {
             actions[name] = action;
 
             // Lắng nghe sự kiện kết thúc của mỗi hành động
-            action.clampWhenFinished = true;
-            action.loop = THREE.LoopOnce;
-            action.addEventListener('finished', () => {
-                if (currentAction === action) {
-                    playAnimation('idle');
-                }
-            });
+            if (action) {
+                action.clampWhenFinished = true;
+                action.loop = THREE.LoopOnce;
+                console.log(action);
+                action.addEventListener('finished', () => {
+                    if (currentAction === action) {
+                        playAnimation('idle');
+                    }
+                });
+            }
+
         });
     }
 
@@ -232,8 +248,39 @@ function loadAnimations(characterName) {
     };
 }
 
+function fetchAndCacheCharacter(characterPath, cache, loader, callback) {
+    loader.load(characterPath, (fbx) => {
+        character = fbx;
+        character.scale.set(0.015, 0.015, 0.015); // Điều chỉnh kích thước nhân vật nếu cần
+        character.position.set(0, 0, 0); // Đảm bảo nhân vật ở vị trí chính xác
+        mixer = new THREE.AnimationMixer(character);
+        scene.add(character);
+
+        loader.load(`${selectedCharacter}/idle.fbx`, (anim) => {
+            idleAction = mixer.clipAction(anim.animations[0]);
+            idleAction.play();
+            actions['idle'] = idleAction;
+        });
+
+        fetch(characterPath)
+            .then(res => res.blob())
+            .then(blob => {
+                const response = new Response(blob);
+                cache.put(characterPath, response);
+            });
+
+        if (callback) callback();
+    }, (xhr) => {
+
+        const progress = Math.round((xhr.loaded / xhr.total) * 100);
+        document.getElementById('progress').style.width = `${progress}%`;
+    }, (error) => {
+        console.error(error);
+    });
+}
+
 function isGreeting(text) {
-    const greetings = ['hello', 'hey', 'greetings', 'howdy', 'bonjour', 'hola', 'chào'];
+    const greetings = ['hello', 'hi', 'hey', 'greetings', 'howdy', 'bonjour', 'hola', 'chào'];
     return greetings.some(greeting => text.toLowerCase().includes(greeting));
 }
 
