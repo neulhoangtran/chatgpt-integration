@@ -1,6 +1,11 @@
-import * as THREE from 'https://cdn.jsdelivr.net/npm/three@0.127.0/build/three.module.js';
-import { FBXLoader } from 'https://cdn.jsdelivr.net/npm/three@0.127.0/examples/jsm/loaders/FBXLoader.js';
-import { OrbitControls } from 'https://cdn.jsdelivr.net/npm/three@0.127.0/examples/jsm/controls/OrbitControls.js';
+import * as THREE from 'three';
+import { FBXLoader } from 'three/addons/loaders/FBXLoader.js';
+import { OrbitControls } from 'three/addons/controls/OrbitControls.js';
+import { RGBELoader } from 'three/addons/loaders/RGBELoader.js';
+import { GroundedSkybox } from 'three/addons/objects/GroundedSkybox.js';
+import { GLTFLoader } from 'three/addons/loaders/GLTFLoader.js';
+import { DRACOLoader } from 'three/addons/loaders/DRACOLoader.js';
+import { GUI } from 'three/addons/libs/lil-gui.module.min.js';
 
 let scene, camera, renderer, mixer, clock, character, actions = {};
 let currentAction, idleAction;
@@ -8,6 +13,13 @@ let recognition;
 let silenceTimeout;
 let isAPICalling = false;
 let selectedCharacter = 'nana';
+let skybox;
+const params = {
+    height: 15,
+    radius: 100,
+    enabled: true,
+};
+
 
 init();
 
@@ -19,20 +31,16 @@ document.getElementById('startButton').addEventListener('click', async () => {
     document.getElementById('startScreen').style.display = 'none';
     document.getElementById('loadingScreen').classList.add('active');
 
-    console.log(123123213)
     await loadCharacter();
 
-    console.log(22222)
     document.getElementById('mainContent').style.display = 'block';
     animate();
     initializeSpeechRecognition();
 
     await loadAnimations();
-    console.log(3333333333)
     playAnimation('idle');
 
     setTimeout(() => {
-        console.log(4444)
         removeLoadingScreen();
     }, 50);
 });
@@ -145,35 +153,118 @@ function removeLoadingScreen() {
     document.getElementById('loadingScreen').classList.remove('active');
 }
 
-function init() {
+async function init() {
     scene = new THREE.Scene();
-    scene.background = new THREE.Color(0xa0a0a0);
+    // scene.background = new THREE.Color(0xa0a0a0);
 
-    renderer = new THREE.WebGLRenderer({ antialias: true });
-    renderer.setPixelRatio(window.devicePixelRatio);
-    renderer.setSize(window.innerWidth, window.innerHeight);
-    document.body.appendChild(renderer.domElement);
+    
 
-    camera = new THREE.PerspectiveCamera(45, window.innerWidth / window.innerHeight, 1, 100);
-    camera.position.set(-1, 2, 5);
+    // camera = new THREE.PerspectiveCamera(45, window.innerWidth / window.innerHeight, 1, 100);
+    // camera.position.set(-1, 2, 5);
+
+    camera = new THREE.PerspectiveCamera(
+        40,
+        window.innerWidth / window.innerHeight,
+        1,
+        1000
+    );
+    camera.position.set( 2.38, 5, 21.99 );
+    camera.lookAt( 0, 0, 0 );
+
+    scene = new THREE.Scene();
+
+    const hdrLoader = new RGBELoader();
+    const envMap = await hdrLoader.loadAsync( 'background/equirectangular/blouberg_sunrise_2_1k.hdr' );
+    envMap.mapping = THREE.EquirectangularReflectionMapping;
+
+    skybox = new GroundedSkybox( envMap, params.height, params.radius );
+    skybox.position.y = params.height - 0.01;
+    scene.add( skybox );
+
+    scene.environment = envMap;
+
+    const dracoLoader = new DRACOLoader();
+    dracoLoader.setDecoderPath( 'https://cdn.jsdelivr.net/npm/three@0.165.0/examples/jsm/libs/draco/gltf/' );
+
+    const loader = new GLTFLoader();
+    loader.setDRACOLoader( dracoLoader );
 
     clock = new THREE.Clock();
 
-    const hemiLight = new THREE.HemisphereLight(0xffffff, 0x444444);
-    hemiLight.position.set(0, 10, 10);
-    scene.add(hemiLight);
+    renderer = new THREE.WebGLRenderer( { antialias: true } );
+    renderer.setPixelRatio( window.devicePixelRatio );
+    renderer.setSize( window.innerWidth, window.innerHeight );
+    renderer.toneMapping = THREE.ACESFilmicToneMapping;
 
+    //
+
+    const controls = new OrbitControls( camera, renderer.domElement );
+    // controls.addEventListener( 'change', render );
+    controls.target.set( 0, 5, 0 );
+    // !important
+    controls.maxPolarAngle = THREE.MathUtils.degToRad( 90 );
+    controls.maxDistance = 40;
+    controls.minDistance = 20;
+    controls.enablePan = false;
+    controls.update();
+
+    
+
+    
+
+    document.body.appendChild( renderer.domElement );
+
+    
+    
+    const hemiLight = new THREE.HemisphereLight(0xffffff, 0xffffff);
+    hemiLight.position.set(3, 7, 2);
+    scene.add(hemiLight);
+    
     const dirLight = new THREE.DirectionalLight(0xffffff);
-    dirLight.position.set(0, 10, 10);
+    dirLight.position.set(0, 0, 3.3);
     dirLight.castShadow = true;
     scene.add(dirLight);
+    
+    // const grid = new THREE.GridHelper(10, 10, 0x888888, 0x444444);
+    // scene.add(grid);
+    
+    
 
-    const grid = new THREE.GridHelper(10, 10, 0x888888, 0x444444);
-    scene.add(grid);
+    // controls.addEventListener('change', () => {
+    //     console.log(`Camera position: ${camera.position.x}, ${camera.position.y}, ${camera.position.z}`);
+    //     console.log(`Camera zoom: ${camera.zoom}`);
+    // });
 
-    const controls = new OrbitControls(camera, renderer.domElement);
-    controls.target.set(0, 1, 0);
-    controls.update();
+    const gui = new GUI();
+    // gui.add(camera.position, 'x', -10, 10).name('Camera X').onChange(() => console.log(`Camera X: ${camera.position.x}`));
+    // gui.add(camera.position, 'y', -10, 10).name('Camera Y').onChange(() => console.log(`Camera Y: ${camera.position.y}`));
+    // gui.add(camera.position, 'z', -10, 10).name('Camera Z').onChange(() => console.log(`Camera Z: ${camera.position.z}`));
+    // gui.add(camera, 'zoom', 0.1, 10).name('Camera Zoom').onChange(() => {
+    //     camera.updateProjectionMatrix();
+    //     console.log(`Camera Zoom: ${camera.zoom}`);
+    // });
+    
+    // const hemiLightFolder = gui.addFolder('Hemisphere Light');
+    // hemiLightFolder.add(hemiLight.position, 'x', -50, 50).name('Position X');
+    // hemiLightFolder.add(hemiLight.position, 'y', 0, 50).name('Position Y');
+    // hemiLightFolder.add(hemiLight.position, 'z', -50, 50).name('Position Z');
+    // hemiLightFolder.addColor(hemiLight, 'color').name('Sky Color');
+    // hemiLightFolder.addColor(hemiLight, 'groundColor').name('Ground Color');
+    // hemiLightFolder.open();
+
+    // // DirectionalLight controls
+    // const dirLightFolder = gui.addFolder('Directional Light');
+    // dirLightFolder.add(dirLight.position, 'x', -50, 50).name('Position X');
+    // dirLightFolder.add(dirLight.position, 'y', 0, 50).name('Position Y');
+    // dirLightFolder.add(dirLight.position, 'z', -50, 50).name('Position Z');
+    // dirLightFolder.add(dirLight, 'intensity', 0, 2).name('Intensity');
+    // dirLightFolder.add(dirLight.shadow, 'bias', -0.05, 0.05).name('Shadow Bias');
+    // dirLightFolder.add(dirLight.shadow.camera, 'left', -100, 100).name('Shadow Left');
+    // dirLightFolder.add(dirLight.shadow.camera, 'right', -100, 100).name('Shadow Right');
+    // dirLightFolder.add(dirLight.shadow.camera, 'top', -100, 100).name('Shadow Top');
+    // dirLightFolder.add(dirLight.shadow.camera, 'bottom', -100, 100).name('Shadow Bottom');
+    // dirLightFolder.open();
+    
 
     window.addEventListener('resize', onWindowResize);
 }
@@ -190,7 +281,7 @@ function loadCharacter() {
                         const url = URL.createObjectURL(blob);
                         loader.load(url, (fbx) => {
                             character = fbx;
-                            character.scale.set(0.015, 0.015, 0.015);
+                            character.scale.set(0.05, 0.05, 0.05);
                             character.position.set(0, 0, 0);
                             mixer = new THREE.AnimationMixer(character);
                             scene.add(character);
@@ -219,7 +310,7 @@ function fetchAndCacheCharacter(characterPath, cache, loader) {
     return new Promise((resolve, reject) => {
         loader.load(characterPath, (fbx) => {
             character = fbx;
-            character.scale.set(0.015, 0.015, 0.015);
+            character.scale.set(0.05, 0.05, 0.05);
             character.position.set(0, 0, 0);
             mixer = new THREE.AnimationMixer(character);
             scene.add(character);
